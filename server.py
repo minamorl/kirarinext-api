@@ -28,8 +28,15 @@ class Comment(PersistentData):
     author = Column()
 
 
-def get_all_comments(thread_name):
-    return [comment for comment in p.load_all(Comment) if comment.thread == thread_name]
+def find_all_comments(thread):
+    return [comment for comment in p.load_all(Comment) if comment.thread == thread.name]
+
+
+def find_thread(thread_name, ensure_exists=True):
+    thread = p.find(Thread, lambda thread: thread.name == thread_name) or Thread(name=thread_name)
+    if ensure_exists:
+        p.save(thread)  # ensure thread is existing on database.
+    return thread
 
 
 @app.route("/api/comment.json", methods=["POST"])
@@ -44,9 +51,8 @@ def comment():
 @app.route("/api/thread.json", methods=["GET"])
 def thread():
     thread_name = "$DEFAULT"
-    thread = p.find(Thread, lambda thread: thread.name == thread_name) or Thread(name=thread_name)
-    p.save(thread)  # ensure thread is existing on database.
-    comments = get_all_comments(thread_name)
+    thread = find_thread(thread_name)
+    comments = find_all_comments(thread)
     results = [comment_to_json(comment) for comment in comments]
     return json(results)
 

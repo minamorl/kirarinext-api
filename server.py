@@ -16,6 +16,12 @@ def ok():
     })
 
 
+def error(msg):
+    return json({
+        "message": msg
+    })
+
+
 class Thread(PersistentData):
     id = Column()
     name = Column()
@@ -35,7 +41,7 @@ def find_all_comments(thread):
 def find_thread(thread_name, ensure_exists=True):
     thread = p.find(Thread, lambda thread: thread.name == thread_name) or Thread(name=thread_name)
     if ensure_exists:
-        p.save(thread)  # ensure thread is existing on database.
+        p.save(thread) # ensure thread is existing on database.
     return thread
 
 
@@ -43,6 +49,8 @@ def find_thread(thread_name, ensure_exists=True):
 def comment():
     body = request.json.get("body")
     thread = "$DEFAULT"
+    if len(body) > 1000:
+        return error("comment must be less than 10000 characters.")
     comment = Comment(body=body, thread=thread, author="anonymous")
     p.save(comment)
     return ok()
@@ -63,6 +71,7 @@ def comment_to_json(comment):
             "name": comment.author
         },
         "body": comment.body,
+        "id": comment.id,
         "thread": {
             "name": comment.body
         }

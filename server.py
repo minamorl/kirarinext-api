@@ -32,6 +32,7 @@ class Comment(PersistentData):
     body = Column()
     thread = Column()
     author = Column()
+    remote_addr = Column()
 
 
 def find_all_comments(thread):
@@ -41,7 +42,7 @@ def find_all_comments(thread):
 def find_thread(thread_name, ensure_exists=True):
     thread = p.find(Thread, lambda thread: thread.name == thread_name) or Thread(name=thread_name)
     if ensure_exists:
-        p.save(thread) # ensure thread is existing on database.
+        p.save(thread)  # ensure thread is existing on database.
     return thread
 
 
@@ -51,7 +52,10 @@ def comment():
     thread = "$DEFAULT"
     if len(body) > 1000:
         return error("comment must be less than 10000 characters.")
-    comment = Comment(body=body, thread=thread, author="anonymous")
+    comment = Comment(
+        body=body, thread=thread, author="anonymous",
+        remote_addr=request.environ['REMOTE_ADDR'],
+    )
     p.save(comment)
     return ok()
 

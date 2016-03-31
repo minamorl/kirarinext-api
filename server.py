@@ -35,8 +35,13 @@ class Comment(PersistentData):
     remote_addr = Column()
 
 
-def find_all_comments(thread):
-    return [comment for comment in p.load_all(Comment) if comment.thread == thread.name]
+def find_comments(thread, fetch_from=None):
+    if fetch_from is not None:
+        ids = range(int(fetch_from) + 1, int(p.get_max_id(Comment)) +1)
+        return [p.load(Comment, _id) for _id in ids]
+
+    return [comment for comment in p.load_all(Comment) 
+            if comment.thread == thread.name]
 
 
 def find_thread(thread_name, ensure_exists=True):
@@ -46,7 +51,7 @@ def find_thread(thread_name, ensure_exists=True):
     return thread
 
 
-@app.route("/api/comment.json", methods=["POST"])
+@app.route("/api/comments.json", methods=["POST"])
 def comment():
     body = request.json.get("body")
     thread = "$DEFAULT"
@@ -60,11 +65,11 @@ def comment():
     return ok()
 
 
-@app.route("/api/thread.json", methods=["GET"])
+@app.route("/api/comments.json", methods=["GET"])
 def thread():
     thread_name = "$DEFAULT"
     thread = find_thread(thread_name)
-    comments = find_all_comments(thread)
+    comments = find_comments(thread, request.args.get("from"))
     results = [comment_to_json(comment) for comment in comments]
     return json(results)
 

@@ -33,7 +33,7 @@ def comment():
         return error("comment must be less than 10000 characters.")
     comment = Comment(
         body=body, thread=thread, author="anonymous",
-        remote_addr=request.environ['REMOTE_ADDR'],
+        remote_addr=request.environ.get("HTTP_X_REAL_IP"),
     )
     p.save(comment)
     return ok()
@@ -48,14 +48,27 @@ def thread():
     return json(results)
 
 
-def comment_to_json(comment):
+def generate_hash(string):
     import hashlib
     import random
+
+    return hashlib.sha1((string or str(random.random())).encode("UTF-8")).hexdigest()[:10]
+
+def pick_author_image(idhash):
+    import random
+    rand = random.Random()
+    rand.seed(idhash)
+    img = rand.randrange(0, 7)
+    return "./img/{0:03d}.jpeg".format(img)
+
+def comment_to_json(comment):
+    idhash = generate_hash(comment.remote_addr)
     return {
         "author": {
             "name": comment.author,
-            # generate hash
-            "id": hashlib.sha1((comment.remote_addr or str(random.random())).encode("UTF-8")).hexdigest()[:10]
+            "id": idhash,
+            "avatar": pick_author_image(idhash),
+            "remote_addr": comment.remote_addr
         },
         "body": comment.body,
         "id": comment.id,

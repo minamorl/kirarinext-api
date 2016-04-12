@@ -27,7 +27,7 @@ def find_thread(thread_name, ensure_exists=True):
 
 @app.route("/api/comments", methods=["POST"])
 def comment():
-    body = request.get("body")
+    body = request.json.get("body")
     thread = "$DEFAULT"
     if len(body) > 1000:
         return error("comment must be less than 10000 characters.")

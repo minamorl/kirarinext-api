@@ -54,12 +54,16 @@ def generate_hash(string):
 
     return hashlib.sha1((string or str(random.random())).encode("UTF-8")).hexdigest()[:10]
 
+
 def pick_author_image(idhash):
     import random
     rand = random.Random()
     rand.seed(idhash)
-    img = rand.randrange(0, 7)
+    val = rand.randrange(0, 100000)
+    img = val % (7 + 1)
+
     return "./img/{0:03d}.jpeg".format(img)
+
 
 def comment_to_json(comment):
     idhash = generate_hash(comment.remote_addr)
@@ -68,7 +72,6 @@ def comment_to_json(comment):
             "name": comment.author,
             "id": idhash,
             "avatar": pick_author_image(idhash),
-            "remote_addr": comment.remote_addr
         },
         "body": comment.body,
         "id": comment.id,

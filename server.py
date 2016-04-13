@@ -31,6 +31,8 @@ def comment():
     thread = "$DEFAULT"
     if len(body) > 1000:
         return error("comment must be less than 10000 characters.")
+    if body == "":
+        return error("comment cannot be empty.")
 
     comment = Comment(
         body=body, thread=thread, author="anonymous",

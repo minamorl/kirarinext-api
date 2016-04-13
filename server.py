@@ -31,11 +31,16 @@ def comment():
     thread = "$DEFAULT"
     if len(body) > 1000:
         return error("comment must be less than 10000 characters.")
+
     comment = Comment(
         body=body, thread=thread, author="anonymous",
         remote_addr=request.environ.get("HTTP_X_REAL_IP"),
     )
     p.save(comment)
+
+    user = p.find_by(Anonymous, "remote_addr", comment.remote_addr) or Anonymous(avatar_url=pick_author_image(idhash), remote_addr=comment.remote_addr)
+    p.save(user)
+
     return ok()
 
 
@@ -60,18 +65,21 @@ def pick_author_image(idhash):
     rand = random.Random()
     rand.seed(idhash)
     val = rand.randrange(0, 100000)
-    img = val % (7 + 1)
+    img = val % (12 + 1)
 
     return "./img/{0:03d}.jpeg".format(img)
 
 
 def comment_to_json(comment):
     idhash = generate_hash(comment.remote_addr)
+    user = None
+    user = p.find_by(Anonymous, "remote_addr", comment.remote_addr) or Anonymous(avatar_url=pick_author_image(idhash), remote_addr=comment.remote_addr)
+    p.save(user)
     return {
         "author": {
             "name": comment.author,
             "id": idhash,
-            "avatar": pick_author_image(idhash),
+            "avatar": user.avatar_url,
         },
         "body": comment.body,
         "id": comment.id,

@@ -11,8 +11,12 @@ p = Persistent("kirarinext")
 
 def find_comments(thread, fetch_from=None):
     if fetch_from is not None:
-        ids = range(int(fetch_from) + 1, int(p.get_max_id(Comment)) + 1)
+        max_id = p.get_max_id(Comment)
+        if max_id is None:
+            return []
+        ids = range(int(fetch_from) + 1, max_id + 1)
         return [p.load(Comment, _id) for _id in ids]
+
 
     return [comment for comment in p.load_all(Comment)
             if comment.thread == thread.name]

@@ -12,6 +12,7 @@ class Comment(PersistentData):
     thread = Column()
     author = Column()
     remote_addr = Column()
+    created_at = Column()
 
 
 class Anonymous(PersistentData):

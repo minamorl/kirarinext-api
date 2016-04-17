@@ -1,5 +1,6 @@
 from redisorm.core import Persistent
 from flask import Flask, request, jsonify
+import datetime
 
 from libs.response import *
 from libs.models import *
@@ -41,6 +42,7 @@ def comment():
     comment = Comment(
         body=body, thread=thread, author="anonymous",
         remote_addr=request.environ.get("HTTP_X_REAL_IP"),
+        created_at=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     )
     p.save(comment)
 
@@ -67,12 +69,11 @@ def generate_hash(string):
     return hashlib.sha1((string or str(random.random())).encode("UTF-8")).hexdigest()[:10]
 
 
-def pick_author_image(idhash):
+def pick_author_image(seed):
     import random
     rand = random.Random()
-    rand.seed(idhash)
-    val = rand.randrange(0, 100000)
-    img = val % (12 + 1)
+    rand.seed(seed)
+    img = rand.randrange(0, 13)
 
     return "./img/{0:03d}.jpeg".format(img)
 
@@ -89,6 +90,7 @@ def comment_to_json(comment):
             "avatar": user.avatar_url,
         },
         "body": comment.body,
+        "created_at": comment.created_at or "有史以前",
         "id": comment.id,
         "thread": {
             "name": comment.body

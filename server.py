@@ -69,11 +69,9 @@ def generate_hash(string):
     return hashlib.sha1((string or str(random.random())).encode("UTF-8")).hexdigest()[:10]
 
 
-def pick_author_image(seed):
+def pick_author_image():
     import random
-    rand = random.Random()
-    rand.seed(seed)
-    img = rand.randrange(0, 13)
+    img = random.randrange(0, 12)
 
     return "./img/{0:03d}.jpeg".format(img)
 
@@ -81,7 +79,7 @@ def pick_author_image(seed):
 def comment_to_json(comment):
     idhash = generate_hash(comment.remote_addr)
     user = None
-    user = p.find_by(Anonymous, "remote_addr", comment.remote_addr) or Anonymous(avatar_url=pick_author_image(idhash), remote_addr=comment.remote_addr)
+    user = p.find_by(Anonymous, "remote_addr", comment.remote_addr) or Anonymous(avatar_url=pick_author_image(), remote_addr=comment.remote_addr)
     p.save(user)
     return {
         "author": {

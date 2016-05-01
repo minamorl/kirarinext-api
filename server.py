@@ -47,7 +47,7 @@ def comment():
     p.save(comment)
 
     idhash = generate_hash(comment.remote_addr)
-    user = p.find_by(Anonymous, "remote_addr", comment.remote_addr) or Anonymous(avatar_url=pick_author_image(idhash), remote_addr=comment.remote_addr)
+    user = p.find_by(Anonymous, "remote_addr", comment.remote_addr) or Anonymous(avatar_url=pick_author_image(), remote_addr=comment.remote_addr)
     p.save(user)
 
     return ok()

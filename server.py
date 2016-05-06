@@ -99,13 +99,19 @@ def comment_to_json(comment):
         }
     }
 
+def is_valid_username(username):
+    import re
+    cond = True
+    cond = username != "anonymous" 
+    cond = cond and re.match(r'^[A-Za-z0-9_]{3,10}$', username) 
+    return cond
 
 @app.route("/api/users", methods=["POST"])
 def signin():
     username = request.json.get("username")
     password = request.json.get("password")
 
-    if username == "anonymous":
+    if not is_valid_username(username):
         return json({
             "auth": str(False)
         })

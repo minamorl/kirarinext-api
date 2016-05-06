@@ -19,3 +19,10 @@ class Anonymous(PersistentData):
     id = Column()
     remote_addr = Column()
     avatar_url = Column()
+
+
+class User(PersistentData):
+    id = Column()
+    avatar_url = Column()
+    username = Column()
+    password = Column()

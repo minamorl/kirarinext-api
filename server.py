@@ -40,8 +40,6 @@ def comment():
         return error("comment must be less than 10000 characters.")
     if body == "":
         return error("comment cannot be empty.")
-    now = datetime.datetime.now()
-
     comment = Comment(
         body=body, thread=thread, author=session.get("username") or "anonymous",
         remote_addr=request.environ.get("HTTP_X_REAL_IP"),
@@ -132,7 +130,7 @@ def signin():
 
 @app.route("/api/signout")
 def signout():
-    session["username"] = "anonymous"
+    session.clear()
     return ok()
 
 

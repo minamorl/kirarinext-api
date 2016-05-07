@@ -105,7 +105,7 @@ def comment_to_json(comment):
 def is_valid_username(username):
     cond = True
     cond = username != "anonymous" 
-    cond = cond and re.match(r'^[A-Za-z0-9_]{3,10}$', username) 
+    cond = cond and re.match(r'^[A-Za-z0-9_]{3,12}$', username) 
     return cond
 
 @app.route("/api/users", methods=["POST"])

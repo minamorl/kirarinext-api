@@ -142,6 +142,26 @@ def signout():
     return ok()
 
 
+@app.route("/api/account_settings", methods=["POST"])
+def account_settings():
+    username = session.get("username")
+    if username is None:
+        return error("User is not authed")
+    if request.json.get("update_icon"):
+        user = p.find_by(User, "username", username)
+        user.avatar_url = pick_author_image()
+        p.save(user)
+
+    return json({
+        "auth": str(True),
+        "user": {
+            "id": user.id,
+            "username": user.username,
+            "avatar_url": user.avatar_url,
+        }
+    })
+
+
 def main():
     app.run(port=9010, debug=True)
 

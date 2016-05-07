@@ -1,14 +1,20 @@
 from redisorm.core import Persistent
 from flask import Flask, request, jsonify, session
 import datetime
+import os
+import dotenv
+import hashlib
+import random
+import re
 
 from libs.response import *
 from libs.models import *
 from libs.auth import *
 
+dotenv.load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
 
 app = Flask(__name__)
-app.secret_key = "whegwiaogjwei;gwa"
+app.secret_key = os.environ.get("FLASK_SECRET_KEY")
 
 p = Persistent("kirarinext")
 
@@ -65,14 +71,11 @@ def thread():
 
 
 def generate_hash(string):
-    import hashlib
-    import random
 
     return hashlib.sha1((string or str(random.random())).encode("UTF-8")).hexdigest()[:10]
 
 
 def pick_author_image():
-    import random
     img = random.randrange(0, 12)
 
     return "./img/{0:03d}.jpeg".format(img)
@@ -100,7 +103,6 @@ def comment_to_json(comment):
     }
 
 def is_valid_username(username):
-    import re
     cond = True
     cond = username != "anonymous" 
     cond = cond and re.match(r'^[A-Za-z0-9_]{3,10}$', username) 

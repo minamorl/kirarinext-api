@@ -40,6 +40,11 @@ def find_thread(thread_name, ensure_exists=True):
     return thread
 
 
+@app.before_request
+def before_request():
+    session.permanent = True
+
+
 @app.route("/api/comments", methods=["POST"])
 def comment():
     body = request.json.get("body")

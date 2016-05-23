@@ -75,7 +75,10 @@ def thread():
     thread = find_thread(thread_name)
     comments = find_comments(thread, request.args.get("from"))
     results = [comment_to_json(comment) for comment in comments]
-    return json(results)
+    return json({
+        "auth": is_signed_in(),
+        "comments": results
+    })
 
 
 def generate_hash(string):
@@ -116,6 +119,9 @@ def is_valid_username(username):
     cond = cond and re.match(r'^[A-Za-z0-9_]{3,12}$', username) 
     return cond
 
+def is_signed_in():
+    return session.get("username") is not None
+
 @app.route("/api/users", methods=["POST"])
 def signin():
     username = request.json.get("username")
@@ -123,19 +129,19 @@ def signin():
 
     if not is_valid_username(username):
         return json({
-            "auth": str(False)
+            "auth": False
         })
 
     user = p.find_by(User, "username", username) or User(username=username, password=hashed_password(password), avatar_url=pick_author_image())
     p.save(user)
     if user.password != hashed_password(password):
         return json({
-            "auth": str(False)
+            "auth": False
         })
     session['username'] = username
     print(session)
     return json({
-        "auth": str(True),
+        "auth": True,
         "user": {
             "id": user.id,
             "username": user.username,

@@ -1,12 +1,12 @@
-from redisorm.core import PersistentData, Column
+from redisorm.core import Model, Column
 
 
-class Thread(PersistentData):
+class Thread(Model):
     id = Column()
     name = Column()
 
 
-class Comment(PersistentData):
+class Comment(Model):
     id = Column()
     body = Column()
     thread = Column()
@@ -15,14 +15,20 @@ class Comment(PersistentData):
     created_at = Column()
 
 
-class Anonymous(PersistentData):
+class Anonymous(Model):
     id = Column()
     remote_addr = Column()
     avatar_url = Column()
 
 
-class User(PersistentData):
+class User(Model):
     id = Column()
     avatar_url = Column()
     username = Column()
     password = Column()
+
+
+class Favorite(Model):
+    id = Column()
+    user_id = Column()
+    comment_id = Column()

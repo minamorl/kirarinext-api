@@ -53,5 +53,5 @@ def comment_to_json(comment):
 
 
 def pick_author_image():
-    img = random.randrange(0, 12)
+    img = random.randrange(0, 15)
     return "./img/{0:03d}.jpeg".format(img)

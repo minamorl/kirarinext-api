@@ -68,9 +68,7 @@ def signin():
     password = request.json.get("password")
 
     if not is_valid_username(username):
-        return json({
-            "auth": False
-        })
+        return error("Username must be 3-12 characters.")
 
     user = p.find_by(User, "username", username)
 
@@ -79,9 +77,7 @@ def signin():
         p.save(user)
     else:
         if user.password != hashed_password(password):
-            return json({
-                "auth": False
-            })
+            return error("Username or password is incorrect.")
 
     session['username'] = username
     print(session)

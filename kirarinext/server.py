@@ -16,8 +16,8 @@ def before_request():
     session.permanent = True
 
 from . import endpoints
+import types
 
-app.register_blueprint(endpoints.users.api)
-app.register_blueprint(endpoints.comments.api)
-app.register_blueprint(endpoints.account_settings.api)
-app.register_blueprint(endpoints.signout.api)
+for _, v in endpoints.__dict__.items():
+    if isinstance(v, types.ModuleType):
+        app.register_blueprint(v.api)

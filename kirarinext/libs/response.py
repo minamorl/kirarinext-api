@@ -1,5 +1,4 @@
 from flask import jsonify, session
-from .misc import is_signed_in
 from . import p
 from .models import *
 
@@ -27,7 +26,7 @@ def error(msg):
 
 def authorization_details():
     user = p.find_by(User, "username", session.get("username"))
-    if is_signed_in():
+    if user is not None:
         return {
             "auth": True,
             "user": {

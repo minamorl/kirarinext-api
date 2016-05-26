@@ -33,9 +33,3 @@ class Favorite(Model):
     id = Column()
     user_id = Column()
     comment_id = Column()
-
-
-class Session(Model):
-    id = Column()
-    session_id = Column()
-    data = Column()

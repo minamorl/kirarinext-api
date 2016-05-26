@@ -26,9 +26,16 @@ class User(Model):
     avatar_url = Column()
     username = Column()
     password = Column()
+    screen_name = Column()
 
 
 class Favorite(Model):
     id = Column()
     user_id = Column()
     comment_id = Column()
+
+
+class Session(Model):
+    id = Column()
+    session_id = Column()
+    data = Column()

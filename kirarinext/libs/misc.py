@@ -6,6 +6,7 @@ import random
 import re
 from . import p
 from .models import *
+from flask import session
 
 
 def find_comments(thread, fetch_from=None, page=None):
@@ -55,3 +56,7 @@ def comment_to_json(comment):
 def pick_author_image():
     img = random.randrange(0, 15)
     return "./img/{0:03d}.jpeg".format(img)
+
+
+def is_signed_in():
+    return session.get("username") is not None

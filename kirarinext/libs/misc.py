@@ -29,30 +29,6 @@ def find_thread(thread_name, ensure_exists=True):
     return thread
 
 
-def comment_to_json(comment):
-    def generate_hash(string):
-        return hashlib.sha1((string or str(random.random())).encode("UTF-8")).hexdigest()[:10]
-    idhash = generate_hash(comment.remote_addr)
-    if comment.author != "anonymous":
-        user = p.find_by(User, "username", comment.author)
-    else:
-        user = p.find_by(Anonymous, "remote_addr", comment.remote_addr) or Anonymous(avatar_url=pick_author_image(), remote_addr=comment.remote_addr)
-        p.save(user)
-    return {
-        "author": {
-            "name": comment.author,
-            "id": idhash,
-            "avatar": user.avatar_url,
-        },
-        "body": comment.body,
-        "created_at": comment.created_at or "有史以前",
-        "id": comment.id,
-        "thread": {
-            "name": comment.body
-        }
-    }
-
-
 def pick_author_image():
     img = random.randrange(0, 15)
     return "./img/{0:03d}.jpeg".format(img)

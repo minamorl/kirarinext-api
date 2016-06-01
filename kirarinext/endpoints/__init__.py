@@ -1,1 +1,1 @@
-from . import account_settings, comments, signout, users
+from . import account_settings, comments, signout, users, favorites
